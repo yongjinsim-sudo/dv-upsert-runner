@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "source": "DVQR",
+  "generatedBy": "DV Quick Run",
+  "entityLogicalName": "cr564_dvurtestrecord",
+  "keyMode": "AlternateKey",
+  "keyColumn": "cr564_externalid",
+  "records": [
+    {
+      "cr564_externalid": "TEST-0001",
+      "cr564_name": "Alpha",
+      "cr564_requiredtext": "Required A",
+      "cr564_testnumber": 100,
+      "cr564_testdate": "2026-06-12"
+    },
+    {
+      "cr564_externalid": "TEST-0002",
+      "cr564_name": "Beta",
+      "cr564_requiredtext": "Required B",
+      "cr564_testnumber": 200,
+      "cr564_testdate": "2026-06-12"
+    }
+  ]
+}

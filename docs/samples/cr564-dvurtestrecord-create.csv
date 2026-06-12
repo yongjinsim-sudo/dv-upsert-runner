@@ -1,0 +1,6 @@
+cr564_externalid,cr564_name,cr564_requiredtext,cr564_testnumber,cr564_testdate
+TEST-0001,Alpha,Required A,100,2026-06-12
+TEST-0002,Beta,Required B,200,2026-06-12
+TEST-0003,Gamma,Required C,300,2026-06-12
+TEST-0004,Delta,Required D,400,2026-06-12
+TEST-0005,Epsilon,Required E,500,2026-06-12

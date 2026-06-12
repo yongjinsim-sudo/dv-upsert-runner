@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "source": "DVQR",
+  "generatedBy": "DV Quick Run",
+  "entityLogicalName": "account",
+  "keyMode": "AlternateKey",
+  "keyColumn": "accountnumber",
+  "records": [
+    { "accountnumber": "ACC1001", "name": "Contoso Australia", "telephone1": "+61 3 9000 1001" },
+    { "accountnumber": "ACC1002", "name": "Fabrikam Melbourne", "telephone1": "+61 3 9000 1002" },
+    { "accountnumber": "ACC1003", "name": "Adventure Works Sydney", "telephone1": "+61 2 9000 1003" }
+  ]
+}
