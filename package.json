@@ -1,5 +1,5 @@
 {
-	"name": "dv-upsert-runner",
+	"name": "dvur",
 	"displayName": "DV Upsert Runner",
 	"description": "Preview-first Dataverse bulk upsert utility for CSV, JSON, and DVUR packages.",
 	"version": "1.0.0",
