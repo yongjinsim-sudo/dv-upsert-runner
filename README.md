@@ -12,7 +12,7 @@ DV Bulk Upsert Runner applies staged single-entity data rows. It does not perfor
 
 ## Version
 
-**v1.0.0 — Preview-First Bulk Upsert Runner**
+**v1.0.1 — Preview-First Bulk Upsert Runner**
 
 ---
 
@@ -62,7 +62,7 @@ Export / Requeue Failures
 
 ## Import & Preview
 
-![DVUR Home](docs/images/dvur-page-top.png)
+![DVUR Home](docs/dvur-page-top.png)
 
 Import CSV, JSON, or DVUR packages and preview staged rows before Dataverse is modified.
 
@@ -70,7 +70,7 @@ Import CSV, JSON, or DVUR packages and preview staged rows before Dataverse is m
 
 ## Create / Update Classification
 
-![Create Update Classification](docs/images/dvur-page-create-update-checks.png)
+![Create Update Classification](docs/dvur-page-create-update-checks.png)
 
 DVUR can classify staged rows as creates or updates before execution.
 
@@ -80,7 +80,7 @@ Metadata-backed key selection helps identify valid primary IDs and active altern
 
 ## Applying Upserts
 
-![Applying Upserts](docs/images/dvur-page-applying-upserts.png)
+![Applying Upserts](docs/dvur-page-applying-upserts.png)
 
 Execution is performed in batches with live progress, throughput, elapsed time, and estimated completion tracking.
 
@@ -88,7 +88,7 @@ Execution is performed in batches with live progress, throughput, elapsed time, 
 
 ## Preview Review Surface
 
-![Preview Upserts](docs/images/dvur-page-preview-upserts.png)
+![Preview Upserts](docs/dvur-page-preview-upserts.png)
 
 Review classified creates and updates before applying changes.
 
@@ -98,7 +98,7 @@ DVUR follows a preview-first workflow and never modifies Dataverse without expli
 
 ## Failure Analysis
 
-![Failure Review](docs/images/dvur-page-failure-summary.png)
+![Failure Review](docs/vur-page-failure-summary.png)
 
 Execution failures are grouped and summarised.
 
