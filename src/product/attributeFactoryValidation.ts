@@ -1,4 +1,4 @@
-import { EntityAttributeViewModel, EntityViewModel, PendingUpsertChange, UpsertPackageDraft, ValidationIssue, ValidationIssueGroup } from './attributeFactoryTypes';
+import { EntityAttributeViewModel, EntityKeyViewModel, EntityViewModel, PendingUpsertChange, UpsertPackageDraft, ValidationIssue, ValidationIssueGroup } from './attributeFactoryTypes';
 
 function normalise(value: string): string { return value.trim().toLowerCase(); }
 
@@ -48,7 +48,7 @@ export function groupValidationIssues(issues: ValidationIssue[], rows: { id: str
 	});
 }
 
-export function validateDrafts(draft: UpsertPackageDraft, entities: EntityViewModel[], attributes: EntityAttributeViewModel[] = []): { issues: ValidationIssue[]; pendingChanges: PendingUpsertChange[]; groups: ValidationIssueGroup[] } {
+export function validateDrafts(draft: UpsertPackageDraft, entities: EntityViewModel[], attributes: EntityAttributeViewModel[] = [], keys: EntityKeyViewModel[] = []): { issues: ValidationIssue[]; pendingChanges: PendingUpsertChange[]; groups: ValidationIssueGroup[] } {
 	const issues: ValidationIssue[] = [];
 
 	if (!draft.imported) {
@@ -68,6 +68,22 @@ export function validateDrafts(draft: UpsertPackageDraft, entities: EntityViewMo
 
 	if (!draft.keyColumn.trim()) {
 		issues.push({ draftId: draft.id, severity: 'Error', code: 'MissingKeyColumn', message: 'Key column is required for preview and upsert.' });
+	} else {
+		const selectedEntity = entities.find(entity => normalise(entity.logicalName) === normalise(draft.entityLogicalName));
+		if (draft.keyMode === 'PrimaryId') {
+			const primaryId = selectedEntity?.primaryIdAttribute;
+			if (primaryId && normalise(draft.keyColumn) !== normalise(primaryId)) {
+				issues.push({ draftId: draft.id, severity: 'Error', code: 'InvalidPrimaryKey', message: `PrimaryId mode for ${draft.entityLogicalName} must use ${primaryId}.` });
+			}
+		} else if (keys.length > 0 || attributes.length > 0) {
+			const activeSingleColumnKeys = keys.filter(key => key.isActive && key.keyAttributes.length === 1);
+			if (!activeSingleColumnKeys.length) {
+				issues.push({ draftId: draft.id, severity: 'Error', code: 'NoActiveAlternateKey', message: `No active single-column alternate keys were found for ${draft.entityLogicalName}. Create and activate an alternate key in Dataverse, or use PrimaryId mode.` });
+			} else if (!activeSingleColumnKeys.some(key => normalise(key.keyAttributes[0]) === normalise(draft.keyColumn))) {
+				const available = activeSingleColumnKeys.map(key => key.keyAttributes[0]).join(', ');
+				issues.push({ draftId: draft.id, severity: 'Error', code: 'InvalidAlternateKey', message: `${draft.keyColumn} is not an active alternate key for ${draft.entityLogicalName}. Available alternate key column(s): ${available}.` });
+			}
+		}
 	}
 
 	if (!draft.rows.length) {

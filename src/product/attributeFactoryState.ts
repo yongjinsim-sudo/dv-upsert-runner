@@ -1,9 +1,10 @@
-import { AttributeFactoryEnvironmentViewModel, EntityAttributeViewModel, EntityViewModel, ExecutionProgress, ExecutionResult, PendingUpsertChange, UpsertPackageDraft, ValidationIssue } from './attributeFactoryTypes';
+import { AttributeFactoryEnvironmentViewModel, EntityAttributeViewModel, EntityKeyViewModel, EntityViewModel, ExecutionProgress, ExecutionResult, PendingUpsertChange, UpsertPackageDraft, ValidationIssue } from './attributeFactoryTypes';
 
 export type AttributeFactoryState = {
 	environment: AttributeFactoryEnvironmentViewModel;
 	entities: EntityViewModel[];
 	entityAttributes: EntityAttributeViewModel[];
+	entityKeys: EntityKeyViewModel[];
 	draft: UpsertPackageDraft;
 	pendingChanges: PendingUpsertChange[];
 	validationIssues: ValidationIssue[];
@@ -19,6 +20,7 @@ export function createInitialAttributeFactoryState(): AttributeFactoryState {
 		environment: { label: 'Not connected', state: 'NotConnected', safety: 'None', safetyLabel: 'No environment selected' },
 		entities: [],
 		entityAttributes: [],
+		entityKeys: [],
 		draft: {
 			id: 'package',
 			entityLogicalName: '',

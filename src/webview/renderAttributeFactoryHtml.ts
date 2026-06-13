@@ -32,6 +32,26 @@ function input(field: string, value: unknown, extra = ''): string {
 function select(field: string, values: string[], selected: string): string {
 	return `<select data-command="updateDraft" data-field="${escapeHtml(field)}">${values.map(value => `<option value="${escapeHtml(value)}"${value === selected ? ' selected' : ''}>${escapeHtml(value)}</option>`).join('')}</select>`;
 }
+function keyColumnSelector(viewModel: AttributeFactoryViewModel): string {
+	const selectedEntity = viewModel.entities.find(entity => entity.logicalName === viewModel.draft.entityLogicalName);
+	if (viewModel.draft.keyMode === 'PrimaryId') {
+		const primaryId = selectedEntity?.primaryIdAttribute || viewModel.draft.keyColumn;
+		if (!primaryId) { return input('keyColumn', viewModel.draft.keyColumn, 'placeholder="primary id column"'); }
+		return `<select data-command="updateDraft" data-field="keyColumn"><option value="${escapeHtml(primaryId)}"${primaryId === viewModel.draft.keyColumn ? ' selected' : ''}>${escapeHtml(primaryId)}${selectedEntity?.displayName ? ` — ${escapeHtml(selectedEntity.displayName)} primary id` : ' — Primary ID'}</option></select>`;
+	}
+
+	const activeSingleColumnKeys = viewModel.entityKeys.filter(key => key.isActive && key.keyAttributes.length === 1);
+	if (!viewModel.draft.entityLogicalName || !viewModel.entityAttributes.length) {
+		return input('keyColumn', viewModel.draft.keyColumn, 'placeholder="select entity first"');
+	}
+	if (!activeSingleColumnKeys.length) {
+		const current = viewModel.draft.keyColumn.trim();
+		return `<select data-command="updateDraft" data-field="keyColumn">${current ? `<option value="${escapeHtml(current)}" selected>${escapeHtml(current)} — not an active alternate key</option>` : ''}<option value=""${current ? '' : ' selected'}>No active single-column alternate keys</option></select>`;
+	}
+	const hasSelected = activeSingleColumnKeys.some(key => key.keyAttributes[0].toLowerCase() === viewModel.draft.keyColumn.toLowerCase());
+	return `<select data-command="updateDraft" data-field="keyColumn">${hasSelected ? '' : `<option value="${escapeHtml(viewModel.draft.keyColumn)}" selected>${escapeHtml(viewModel.draft.keyColumn || 'Select key...')}${viewModel.draft.keyColumn ? ' — not active for this table' : ''}</option>`}${activeSingleColumnKeys.map(key => { const column = key.keyAttributes[0]; const label = `${key.displayName || key.logicalName} — ${column}`; return `<option value="${escapeHtml(column)}"${column.toLowerCase() === viewModel.draft.keyColumn.toLowerCase() ? ' selected' : ''}>${escapeHtml(label)}</option>`; }).join('')}</select>`;
+}
+
 function entitySelector(viewModel: AttributeFactoryViewModel): string {
 	if (!viewModel.entities.length) {
 		return input('entityLogicalName', viewModel.draft.entityLogicalName, 'placeholder="account"');
@@ -377,7 +397,7 @@ export function renderAttributeFactoryHtml(viewModel: AttributeFactoryViewModel,
 		${messageHtml}
 		<section class="dv-grid"><div class="dv-card dv-summary accent-blue"><span>RECORDS</span><strong>${escapeHtml(viewModel.summary.recordCount)}</strong><p>Imported rows</p></div><div class="dv-card dv-summary"><span>CREATES</span><strong>${escapeHtml(viewModel.summary.createCount)}</strong><p>Detected by preview</p></div><div class="dv-card dv-summary accent-yellow"><span>UPDATES</span><strong>${escapeHtml(viewModel.summary.updateCount)}</strong><p>Detected by preview</p></div><div class="dv-card dv-summary"><span>ISSUES</span><strong>${escapeHtml(viewModel.summary.issueCount)}</strong><p>Review before apply</p></div></section>
 		<section class="dv-card dv-section"><div class="dv-section-header"><div><h2>Import package</h2><p>Import generic CSV/JSON or a trusted DVQR-generated .dvur.json package. Generic imports are basic; trusted DVQR packages may carry richer metadata context later.</p></div><div class="dv-actions"><select class="dv-command-select" data-command-select="import"><option value="">Import...</option><option value="importCsv">CSV</option><option value="importJson">JSON / DVUR Package</option></select><select class="dv-command-select" data-command-select="export"><option value="">Export...</option><option value="exportCsv">CSV</option><option value="exportJson">DVUR JSON</option></select><button class="secondary" data-command="validate">Validate</button><button class="secondary" data-command="clearDrafts">Clear</button><button ${isPreviewReady(viewModel) ? '' : 'disabled'} data-command="openPreview">Preview</button></div></div>
-			<div class="dv-draft-fields"><label><span>Entity logical name</span>${entitySelector(viewModel)}</label><label><span>Key mode</span>${select('keyMode', ['AlternateKey', 'PrimaryId'], viewModel.draft.keyMode)}</label><label><span>Key column</span>${input('keyColumn', viewModel.draft.keyColumn, 'placeholder="accountnumber"')}</label><label><span>Batch size</span>${select('batchSize', ['100', '250', '500', '1000'], String(viewModel.draft.batchSize))}</label></div>
+			<div class="dv-draft-fields"><label><span>Entity logical name</span>${entitySelector(viewModel)}</label><label><span>Key mode</span>${select('keyMode', ['AlternateKey', 'PrimaryId'], viewModel.draft.keyMode)}</label><label><span>Key column</span>${keyColumnSelector(viewModel)}</label><label><span>Batch size</span>${select('batchSize', ['100', '250', '500', '1000'], String(viewModel.draft.batchSize))}</label></div>
 			<div class="dv-source-row">${viewModel.draft.imported ? renderPackageSource(viewModel) : ''}<span class="dv-muted">${escapeHtml(viewModel.draft.imported ? (viewModel.draft.sourceLabel || 'Imported package') : 'No source imported. Import CSV, JSON, or DVUR package to begin.')}</span></div>
 			${renderImportSummary(viewModel)}
 			${renderRowPreview(viewModel)}

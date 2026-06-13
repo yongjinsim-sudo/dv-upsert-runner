@@ -12,6 +12,15 @@ export type EntityViewModel = {
 	logicalName: string;
 	entitySetName: string;
 	displayName?: string;
+	primaryIdAttribute?: string;
+};
+
+export type EntityKeyViewModel = {
+	logicalName: string;
+	displayName?: string;
+	keyAttributes: string[];
+	status?: string;
+	isActive: boolean;
 };
 
 export type EntityAttributeViewModel = {
@@ -50,7 +59,7 @@ export type ValidationIssue = {
 	rowId?: string;
 	severity: 'Error' | 'Warning';
 	message: string;
-	code?: 'MissingEntity' | 'UnknownEntity' | 'MissingKeyColumn' | 'NoRows' | 'MissingKeyValue' | 'EmptyRow' | 'DuplicateKey' | 'UnknownColumn' | 'ReadOnlyColumn';
+	code?: 'MissingEntity' | 'UnknownEntity' | 'MissingKeyColumn' | 'NoRows' | 'MissingKeyValue' | 'EmptyRow' | 'DuplicateKey' | 'UnknownColumn' | 'ReadOnlyColumn' | 'InvalidPrimaryKey' | 'InvalidAlternateKey' | 'NoActiveAlternateKey';
 };
 
 export type ValidationIssueGroup = {
@@ -100,6 +109,7 @@ export type AttributeFactoryViewModel = {
 	environment: AttributeFactoryEnvironmentViewModel;
 	entities: EntityViewModel[];
 	entityAttributes: EntityAttributeViewModel[];
+	entityKeys: EntityKeyViewModel[];
 	draft: UpsertPackageDraft;
 	pendingChanges: PendingUpsertChange[];
 	validationIssues: ValidationIssue[];

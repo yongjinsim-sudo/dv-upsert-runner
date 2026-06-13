@@ -28,6 +28,7 @@ export function buildAttributeFactoryViewModel(state: AttributeFactoryState): At
 		environment: { ...state.environment, ...environmentSafety },
 		entities: state.entities,
 		entityAttributes: state.entityAttributes,
+		entityKeys: state.entityKeys,
 		draft: state.draft,
 		pendingChanges: state.pendingChanges,
 		validationIssues: state.validationIssues,

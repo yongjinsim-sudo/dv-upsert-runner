@@ -127,7 +127,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 	const logoUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'images', 'dv-utilities-icon-128.png'));
 
 	function updateValidation(): void {
-		const result = validateDrafts(state.draft, state.entities, state.entityAttributes);
+		const result = validateDrafts(state.draft, state.entities, state.entityAttributes, state.entityKeys);
 		state.validationIssues = result.issues;
 		state.pendingChanges = result.pendingChanges;
 	}
@@ -144,6 +144,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 			state.environment = { label: connection.environmentLabel, url: connection.environmentUrl, state: 'Connected', safety: 'Grey', safetyLabel: 'Connected' };
 			state.entities = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${commandName}: Loading Dataverse tables`, cancellable: false }, () => metadataClient!.listEntities());
 			state.entityAttributes = [];
+			state.entityKeys = [];
 			updateValidation();
 			state.message = { kind: 'Info', text: `Connected to ${connection.environmentLabel}. ${state.entities.length} table(s) loaded.` };
 			render();
@@ -155,6 +156,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 		state.message = { kind: 'Info', text: 'Refreshing Dataverse metadata...' }; render();
 		state.entities = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${commandName}: Refreshing Dataverse tables`, cancellable: false }, () => metadataClient!.listEntities());
 		state.entityAttributes = [];
+		state.entityKeys = [];
 		updateValidation();
 		state.message = { kind: 'Info', text: `Refreshed ${state.entities.length} table(s) from ${state.environment.label}.` };
 		render();
@@ -165,12 +167,23 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 		state.draft.entitySetName = entity?.entitySetName ?? '';
 		if (metadataClient && logicalName && entity) {
 			try {
-				state.entityAttributes = await metadataClient.listAttributes(logicalName);
+				const [attributes, keys] = await Promise.all([metadataClient.listAttributes(logicalName), metadataClient.listKeys(logicalName)]);
+				state.entityAttributes = attributes;
+				state.entityKeys = keys;
+				if (!state.draft.keyColumn.trim()) {
+					if (state.draft.keyMode === 'PrimaryId') {
+						state.draft.keyColumn = entity.primaryIdAttribute ?? '';
+					} else {
+						state.draft.keyColumn = keys.find(key => key.isActive && key.keyAttributes.length === 1)?.keyAttributes[0] ?? '';
+					}
+				}
 			} catch {
 				state.entityAttributes = [];
+				state.entityKeys = [];
 			}
 		} else if (!logicalName) {
 			state.entityAttributes = [];
+			state.entityKeys = [];
 		}
 	}
 	async function importCsvFromFile(): Promise<void> {
@@ -400,8 +413,8 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 					const rawValue = message.payload?.value;
 					if (field === 'batchSize') { state.draft.batchSize = clampBatchSize(rawValue); }
 					else if (field === 'trustedSource') { state.draft.trustedSource = Boolean(rawValue); }
-					else if (field === 'keyMode') { state.draft.keyMode = (rawValue === 'PrimaryId' ? 'PrimaryId' : 'AlternateKey'); }
-					else if (field === 'entityLogicalName' || field === 'keyColumn') { (state.draft[field] as string) = String(rawValue ?? ''); if (field === 'entityLogicalName') { state.entityAttributes = []; state.draft.entitySetName = ''; } }
+					else if (field === 'keyMode') { state.draft.keyMode = (rawValue === 'PrimaryId' ? 'PrimaryId' : 'AlternateKey'); state.draft.keyColumn = ''; }
+					else if (field === 'entityLogicalName' || field === 'keyColumn') { (state.draft[field] as string) = String(rawValue ?? ''); if (field === 'entityLogicalName') { state.entityAttributes = []; state.entityKeys = []; state.draft.entitySetName = ''; state.draft.keyColumn = ''; } }
 					state.executionResults = []; updateValidation(); render(); break;
 				}
 				case 'importCsv': await importCsvFromFile(); break;
@@ -418,7 +431,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 				case 'cancelPreview': state.previewOpen = false; render(); break;
 				case 'applyAndPublish': await applyUpsert(); break;
 				case 'requestCancelRun': state.cancelAfterCurrentBatch = true; if (state.executionProgress?.running) { state.executionProgress = { ...state.executionProgress, stopRequested: true }; state.message = { kind: 'Warning', text: 'Stop requested. DVUR will finish the current batch and skip remaining batches.' }; render(); } break;
-				case 'clearDrafts': state.draft.rows = []; state.draft.imported = false; state.draft.sourceLabel = ''; state.entityAttributes = []; state.executionResults = []; state.executionProgress = undefined; state.previewOpen = false; updateValidation(); render(); break;
+				case 'clearDrafts': state.draft.rows = []; state.draft.imported = false; state.draft.sourceLabel = ''; state.entityAttributes = []; state.entityKeys = []; state.executionResults = []; state.executionProgress = undefined; state.previewOpen = false; updateValidation(); render(); break;
 			}
 		} catch (error) { state.message = { kind: 'Error', text: error instanceof Error ? error.message : String(error) }; render(); }
 	});

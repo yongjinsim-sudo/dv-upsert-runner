@@ -1,6 +1,6 @@
 # DV Upsert Runner
 
-Preview-first Dataverse bulk upsert utility for VS Code.
+Preview-first Dataverse bulk upsert utility inside VS Code.
 
 **DV Upsert Runner** is a focused DV ForgeLab utility for importing CSV, JSON, or `.dvur.json` packages, validating them, previewing single-entity upsert operations, applying them deliberately, and reviewing execution outcomes.
 
@@ -12,31 +12,27 @@ DV Upsert Runner applies staged single-entity data rows. It does not perform ETL
 
 ## Version
 
-v1.0.0
+**v1.0.0 — Preview-First Bulk Upsert Runner**
 
 ---
 
 ## Highlights
 
-* CSV import for flat single-entity rows
-* JSON import for flat rows or package-style payloads
-* `.dvur.json` package support
-* Single-entity Dataverse bulk upsert workflow
-* Primary ID or Alternate Key matching
-* Preview-first execution model
-* Dataverse create/update classification
-* Metadata-backed validation
-* Execution progress tracking
-* Throughput, ETA, and elapsed time monitoring
-* Safe batch-aware cancellation
-* Export skipped rows
-* Requeue skipped rows
-* Export failed rows
-* Requeue failed rows
-* Failure grouping and diagnostics
-* Human-readable Dataverse error interpretation
-* Raw technical evidence for support and troubleshooting
-* Shared DV ForgeLab Dataverse environment settings
+- CSV import
+- JSON import
+- `.dvur.json` package support
+- Single-entity bulk upsert workflow
+- Primary ID support
+- Alternate-key support
+- Metadata-backed key selection
+- Create / Update classification
+- Preview-first execution
+- Batch execution progress tracking
+- Failure grouping and review
+- Failure export
+- Failure requeue
+- Environment-aware execution
+- Shared DV ForgeLab environment settings
 
 ---
 
@@ -45,35 +41,105 @@ v1.0.0
 ```text
 Connect
 ↓
-Import CSV / JSON / DVUR package
-↓
-Select entity and key
+Import CSV / JSON / DVUR Package
 ↓
 Validate
 ↓
-Preview rows
+Preview Rows
 ↓
-Check creates / updates
+Check Creates / Updates
 ↓
-Apply upserts
+Apply Upserts
 ↓
-Review execution report
+Review Results
+↓
+Export / Requeue Failures
 ```
+
+---
+
+# Screenshots
+
+## Import & Preview
+
+![DVUR Home](docs/images/dvur-page-top.png)
+
+Import CSV, JSON, or DVUR packages and preview staged rows before Dataverse is modified.
+
+---
+
+## Create / Update Classification
+
+![Create Update Classification](docs/images/dvur-page-create-update-checks.png)
+
+DVUR can classify staged rows as creates or updates before execution.
+
+Metadata-backed key selection helps identify valid primary IDs and active alternate keys.
+
+---
+
+## Applying Upserts
+
+![Applying Upserts](docs/images/dvur-page-applying-upserts.png)
+
+Execution is performed in batches with live progress, throughput, elapsed time, and estimated completion tracking.
+
+---
+
+## Preview Review Surface
+
+![Preview Upserts](docs/images/dvur-page-preview-upserts.png)
+
+Review classified creates and updates before applying changes.
+
+DVUR follows a preview-first workflow and never modifies Dataverse without explicit user action.
+
+---
+
+## Failure Analysis
+
+![Failure Review](docs/images/dvur-page-failure-summary.png)
+
+Execution failures are grouped and summarised.
+
+DVUR surfaces:
+
+- failure category
+- affected column
+- invalid value
+- expected type
+- suggested corrective action
+- raw Dataverse technical details
+
+Failures can be exported or requeued for later correction and replay.
 
 ---
 
 ## Supported Scope
 
-* Single entity only
-* Flat CSV records
-* Flat JSON records
-* `.dvur.json` package records
-* Primary ID upsert
-* Alternate-key upsert
-* Batch-oriented execution model
-* Execution reporting
-* Failure export and requeue workflows
-* Cancellation and resume workflows
+### Supported
+
+- Single entity imports
+- CSV records
+- JSON records
+- DVUR package records
+- Primary ID upserts
+- Alternate-key upserts
+- Batch execution
+- Failure export
+- Failure requeue
+- Create / Update classification
+
+### Not Supported
+
+- ETL pipelines
+- Scheduled synchronisation
+- Relationship graph migration
+- Attachment migration
+- Data cleansing
+- Transformation workflows
+- Cross-entity dependency resolution
+- Enterprise migration orchestration
 
 ---
 
@@ -83,25 +149,15 @@ DV Upsert Runner is intentionally a runner, not a migration platform.
 
 It does not:
 
-* Perform ETL
-* Schedule synchronisation
-* Transform data
-* Cleanse data
-* Infer missing mappings
-* Migrate relationship graphs
-* Migrate attachments or files
-* Automatically resolve complex lookup graphs
-* Replace enterprise data migration tooling
-
----
-
-## DVUR Packages
-
-Generic CSV and JSON imports are useful for common bulk upsert scenarios.
-
-DVUR packages (`.dvur.json`) provide a portable format for staged data operations, execution review, failure export, skipped-row export, and requeue workflows.
-
-DV Upsert Runner remains responsible for validation, preview, classification, execution, and operational review before data changes are applied to Dataverse.
+- Perform ETL
+- Schedule synchronisation
+- Transform data
+- Cleanse data
+- Infer mappings
+- Migrate relationship graphs
+- Migrate files or attachments
+- Automatically repair data quality issues
+- Replace enterprise migration tooling
 
 ---
 
@@ -127,45 +183,13 @@ DV Upsert Runner: Open Upsert Runner
 
 ---
 
-## Failure Diagnostics
-
-DV Upsert Runner provides operational diagnostics for failed rows.
-
-Common Dataverse execution failures are grouped and summarized to help identify corrective actions quickly.
-
-Examples include:
-
-* Type conversion errors
-* Required field violations
-* Alternate key conflicts
-* Lookup resolution failures
-* Choice value validation failures
-* Permission and security errors
-* Dataverse service errors
-
-Failure review surfaces include:
-
-* Failure summary grouping
-* Affected row counts
-* Failed column identification (where available)
-* Invalid value detection
-* Expected Dataverse type
-* Suggested corrective actions
-* Raw Dataverse technical details for investigation and support escalation
-
----
-
 ## Philosophy
 
 DV Upsert Runner follows the DV ForgeLab preview-first invariant.
 
 Rows are imported locally, validated, previewed, classified, and explicitly applied by the user.
 
-Dataverse data is never changed without an explicit preview and confirmation step.
-
-The goal is simple:
-
-**Understand what will happen before data changes.**
+Dataverse data is never changed without an explicit review and apply step.
 
 ---
 
