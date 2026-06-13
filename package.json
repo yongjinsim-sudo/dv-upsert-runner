@@ -1,6 +1,6 @@
 {
-	"name": "dvur",
-	"displayName": "DV Upsert Runner",
+	"name": "dv-bulk-upsert-runner",
+	"displayName": "DV Bulk Upsert Runner",
 	"description": "Preview-first Dataverse bulk upsert utility for CSV, JSON, and DVUR packages.",
 	"version": "1.0.0",
 	"engines": {
@@ -18,11 +18,11 @@
 		"commands": [
 			{
 				"command": "dvUpsertRunner.openUpsertRunner",
-				"title": "DV Upsert Runner: Open Upsert Runner"
+				"title": "DV Bulk Upsert Runner: Open Bulk Upsert Runner"
 			}
 		],
 		"configuration": {
-			"title": "DV Upsert Runner",
+			"title": "DV Bulk Upsert Runner",
 			"properties": {
 				"dvForgeLab.environments": {
 					"type": "array",

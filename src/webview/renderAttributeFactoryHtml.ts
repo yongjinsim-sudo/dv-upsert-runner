@@ -404,7 +404,7 @@ export function renderAttributeFactoryHtml(viewModel: AttributeFactoryViewModel,
 		</section>
 		<section class="dv-card dv-section"><h2>Validation notes</h2><div class="dv-list">${renderValidation(viewModel)}</div></section>
 		${renderPreview(viewModel)}${renderProgress(viewModel)}${renderResults(viewModel)}
-		<section class="dv-card dv-section"><h2>Boundary</h2><p>Runner, not migration platform. DV Upsert Runner applies single-entity data rows through a preview-first workflow. It does not perform ETL, scheduled sync, relationship graph migration, attachment migration, or automatic data cleansing.</p></section>
-		<footer class="dv-footer-note">DV Upsert Runner is part of the <a href="https://www.dvforgelab.com">DV ForgeLab</a> Dataverse tooling ecosystem. <a href="https://www.dvquickrun.com">DV Quick Run</a> is the flagship Dataverse investigation workbench.</footer>
+		<section class="dv-card dv-section"><h2>Boundary</h2><p>Runner, not migration platform. DV Bulk Upsert Runner applies single-entity data rows through a preview-first workflow. It does not perform ETL, scheduled sync, relationship graph migration, attachment migration, or automatic data cleansing.</p></section>
+		<footer class="dv-footer-note">DV Bulk Upsert Runner is part of the <a href="https://www.dvforgelab.com">DV ForgeLab</a> Dataverse tooling ecosystem. <a href="https://www.dvquickrun.com">DV Quick Run</a> is the flagship Dataverse investigation workbench.</footer>
 	</div><script>${attributeFactoryScript}</script></body></html>`;
 }

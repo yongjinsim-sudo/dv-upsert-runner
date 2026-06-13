@@ -23,7 +23,7 @@ export function buildAttributeFactoryViewModel(state: AttributeFactoryState): At
 	const batchSize = state.draft.batchSize > 0 ? state.draft.batchSize : 250;
 
 	return {
-		productName: 'DV Upsert Runner',
+		productName: 'DV Bulk Upsert Runner',
 		subtitle: 'Preview-first Dataverse bulk upsert utility for CSV, JSON, and DVQR packages.',
 		environment: { ...state.environment, ...environmentSafety },
 		entities: state.entities,

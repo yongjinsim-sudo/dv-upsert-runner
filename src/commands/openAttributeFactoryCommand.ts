@@ -8,8 +8,8 @@ import { validateDrafts } from '../product/attributeFactoryValidation';
 import { buildAttributeFactoryViewModel } from '../product/attributeFactoryViewModelBuilder';
 import { renderAttributeFactoryHtml } from '../webview/renderAttributeFactoryHtml';
 
-const panelTitle = 'DV Upsert Runner';
-const commandName = 'DV Upsert Runner';
+const panelTitle = 'DV Bulk Upsert Runner';
+const commandName = 'DV Bulk Upsert Runner';
 
 type WebviewMessage = { command?: string; payload?: Record<string, unknown> };
 

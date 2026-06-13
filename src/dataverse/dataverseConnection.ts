@@ -180,7 +180,7 @@ export async function getDataverseConnection(
 	const accessToken = await vscode.window.withProgress(
 		{
 			location: vscode.ProgressLocation.Notification,
-			title: `DV Upsert Runner: Connecting to ${profile.name}`,
+			title: `DV Bulk Upsert Runner: Connecting to ${profile.name}`,
 			cancellable: false
 		},
 		() => getAzureCliAccessToken(scope, profile.tenantId)

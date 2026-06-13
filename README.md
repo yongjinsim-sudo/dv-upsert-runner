@@ -1,12 +1,12 @@
-# DV Upsert Runner
+# DV Bulk Upsert Runner
 
 Preview-first Dataverse bulk upsert utility inside VS Code.
 
-**DV Upsert Runner** is a focused DV ForgeLab utility for importing CSV, JSON, or `.dvur.json` packages, validating them, previewing single-entity upsert operations, applying them deliberately, and reviewing execution outcomes.
+**DV Bulk Upsert Runner** is a focused DV ForgeLab utility for importing CSV, JSON, or `.dvur.json` packages, validating them, previewing single-entity upsert operations, applying them deliberately, and reviewing execution outcomes.
 
 It is intentionally about **data application**, not migration.
 
-DV Upsert Runner applies staged single-entity data rows. It does not perform ETL, scheduled sync, relationship graph migration, attachment migration, or automatic data cleansing.
+DV Bulk Upsert Runner applies staged single-entity data rows. It does not perform ETL, scheduled sync, relationship graph migration, attachment migration, or automatic data cleansing.
 
 ---
 
@@ -145,7 +145,7 @@ Failures can be exported or requeued for later correction and replay.
 
 ## Boundary
 
-DV Upsert Runner is intentionally a runner, not a migration platform.
+DV Bulk Upsert Runner is intentionally a runner, not a migration platform.
 
 It does not:
 
@@ -178,14 +178,14 @@ It does not:
 ## Command
 
 ```text
-DV Upsert Runner: Open Upsert Runner
+DV Bulk Upsert Runner: Open Upsert Runner
 ```
 
 ---
 
 ## Philosophy
 
-DV Upsert Runner follows the DV ForgeLab preview-first invariant.
+DV Bulk Upsert Runner follows the DV ForgeLab preview-first invariant.
 
 Rows are imported locally, validated, previewed, classified, and explicitly applied by the user.
 
@@ -195,11 +195,11 @@ Dataverse data is never changed without an explicit review and apply step.
 
 ## Part of the DV ForgeLab Family
 
-DV Upsert Runner is a focused Dataverse utility from DV ForgeLab.
+DV Bulk Upsert Runner is a focused Dataverse utility from DV ForgeLab.
 
 For operational investigation, execution, runtime analysis, and cross-environment comparison, see [DV Quick Run](https://www.dvquickrun.com).
 
-DV Upsert Runner follows the same principles:
+DV Bulk Upsert Runner follows the same principles:
 
 * Preview-first
 * Environment-aware
