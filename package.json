@@ -2,7 +2,7 @@
 	"name": "dv-bulk-upsert-runner",
 	"displayName": "DV Bulk Upsert Runner",
 	"description": "Preview-first Dataverse bulk upsert utility for CSV, JSON, and DVUR packages.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"engines": {
 		"vscode": "^1.85.0"
 	},

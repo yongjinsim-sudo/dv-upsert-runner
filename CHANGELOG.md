@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 — Preview-First Bulk Upsert Runner
+
+Marketplace readme update
+
 ## 1.0.0 — Preview-First Bulk Upsert Runner
 
 Initial public release.
