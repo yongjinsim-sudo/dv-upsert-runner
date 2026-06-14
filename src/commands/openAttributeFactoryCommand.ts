@@ -13,6 +13,16 @@ const commandName = 'DV Bulk Upsert Runner';
 
 type WebviewMessage = { command?: string; payload?: Record<string, unknown> };
 
+function getExtensionVersion(context: vscode.ExtensionContext): string {
+	const packageJson = context.extension.packageJSON as { version?: unknown };
+	return typeof packageJson.version === 'string' && packageJson.version.trim() ? packageJson.version.trim() : 'unknown';
+}
+
+function buildFeedbackUri(context: vscode.ExtensionContext): vscode.Uri {
+	const version = encodeURIComponent(getExtensionVersion(context));
+	return vscode.Uri.parse(`https://dvforgelab.com/feedback?product=dvbur&version=${version}`);
+}
+
 function createRow(rowNumber: number, values: Record<string, unknown>): UpsertRowDraft {
 	return { id: `${Date.now()}-${rowNumber}-${Math.random().toString(16).slice(2)}`, rowNumber, values };
 }
@@ -408,6 +418,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 				case 'connect': await connect(false); break;
 				case 'switchEnvironment': await connect(true); break;
 				case 'refreshMetadata': await refreshMetadata(); break;
+				case 'openFeedback': await vscode.env.openExternal(buildFeedbackUri(context)); break;
 				case 'updateDraft': {
 					const field = normaliseString(message.payload?.field) as keyof UpsertPackageDraft;
 					const rawValue = message.payload?.value;

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 — Feedback to DV ForgeLab
+
+Added a Feedback button to https://dvforgelab.com/feedback
+
 ## 1.0.1 — Preview-First Bulk Upsert Runner
 
 Marketplace readme update

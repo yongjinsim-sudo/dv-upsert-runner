@@ -33,6 +33,7 @@ DV Bulk Upsert Runner applies staged single-entity data rows. It does not perfor
 - Failure requeue
 - Environment-aware execution
 - Shared DV ForgeLab environment settings
+- Direct DV ForgeLab feedback integration
 
 ---
 
@@ -98,7 +99,7 @@ DVUR follows a preview-first workflow and never modifies Dataverse without expli
 
 ## Failure Analysis
 
-![Failure Review](docs/vur-page-failure-summary.png)
+![Failure Review](docs/dvur-page-failure-summary.png)
 
 Execution failures are grouped and summarised.
 
@@ -182,6 +183,22 @@ DV Bulk Upsert Runner: Open Upsert Runner
 ```
 
 ---
+
+## Feedback
+
+DV Bulk Upsert Runner includes direct integration with the DV ForgeLab feedback portal.
+
+Share:
+
+* Feature requests
+* Bug reports
+* Metadata reconstruction scenarios
+* Workflow suggestions
+* Product feedback
+
+Feedback is routed through the shared DV ForgeLab feedback experience and automatically identifies DV Bulk Upsert Runner as the source product.
+
+https://www.dvforgelab.com/feedback
 
 ## Philosophy
 
