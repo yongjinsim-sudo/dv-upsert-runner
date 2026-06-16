@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { openAttributeFactoryCommand } from './commands/openAttributeFactoryCommand';
+import { openBulkUpsertRunnerCommand } from './commands/openBulkUpsertRunnerCommand';
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand('dvUpsertRunner.openUpsertRunner', () => openAttributeFactoryCommand(context))
+		vscode.commands.registerCommand('dvUpsertRunner.openUpsertRunner', () => openBulkUpsertRunnerCommand(context))
 	);
 }
 

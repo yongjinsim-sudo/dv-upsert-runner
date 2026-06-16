@@ -1,4 +1,4 @@
-import { EntityViewModel, ExecutionProgress, ExecutionResult, RowOperation, UpsertPackageDraft, UpsertRowDraft } from '../product/attributeFactoryTypes';
+import { EntityViewModel, ExecutionProgress, ExecutionResult, RowOperation, UpsertPackageDraft, UpsertRowDraft } from '../product/upsertRunnerTypes';
 import { DataverseHttpClient } from './dataverseHttpClient';
 
 function escapeODataString(value: string): string { return value.replace(/'/g, "''"); }
@@ -27,7 +27,7 @@ function chunkRows(rows: UpsertRowDraft[], batchSize: number): UpsertRowDraft[][
 	return chunks;
 }
 
-export class AttributeMutationClient {
+export class UpsertMutationClient {
 	constructor(private readonly client: DataverseHttpClient) {}
 
 	async detectOperation(entity: EntityViewModel, draft: UpsertPackageDraft, row: UpsertRowDraft): Promise<RowOperation> {

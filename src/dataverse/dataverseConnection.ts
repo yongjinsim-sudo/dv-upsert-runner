@@ -16,9 +16,9 @@ export type DataverseConnection = {
 	client: DataverseHttpClient;
 };
 
-const activeEnvironmentKey = 'dvAttributeFactory.activeEnvironment';
+const activeEnvironmentKey = 'dvBulkUpsertRunner.activeEnvironment';
 const sharedConfigurationSection = 'dvForgeLab';
-const legacyConfigurationSection = 'dvAttributeFactory';
+const legacyConfigurationSection = 'dvBulkUpsertRunner';
 
 function normalizeEnvironmentUrl(input: string): string {
 	return input

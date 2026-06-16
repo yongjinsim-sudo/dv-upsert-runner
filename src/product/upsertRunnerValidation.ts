@@ -1,4 +1,4 @@
-import { EntityAttributeViewModel, EntityKeyViewModel, EntityViewModel, PendingUpsertChange, UpsertPackageDraft, ValidationIssue, ValidationIssueGroup } from './attributeFactoryTypes';
+import { EntityAttributeViewModel, EntityKeyViewModel, EntityViewModel, PendingUpsertChange, UpsertPackageDraft, ValidationIssue, ValidationIssueGroup } from './upsertRunnerTypes';
 
 function normalise(value: string): string { return value.trim().toLowerCase(); }
 

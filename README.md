@@ -2,7 +2,7 @@
 
 Preview-first Dataverse bulk upsert utility inside VS Code.
 
-**DV Bulk Upsert Runner** is a focused DV ForgeLab utility for importing CSV, JSON, or `.dvur.json` packages, validating them, previewing single-entity upsert operations, applying them deliberately, and reviewing execution outcomes.
+**DV Bulk Upsert Runner** is a focused DV ForgeLab utility for importing CSV, JSON, or `.dvbur.json` packages, validating them, previewing single-entity upsert operations, applying them deliberately, and reviewing execution outcomes.
 
 It is intentionally about **data application**, not migration.
 
@@ -10,17 +10,11 @@ DV Bulk Upsert Runner applies staged single-entity data rows. It does not perfor
 
 ---
 
-## Version
-
-**v1.0.1 — Preview-First Bulk Upsert Runner**
-
----
-
 ## Highlights
 
 - CSV import
 - JSON import
-- `.dvur.json` package support
+- `.dvbur.json` package support
 - Single-entity bulk upsert workflow
 - Primary ID support
 - Alternate-key support
@@ -42,7 +36,7 @@ DV Bulk Upsert Runner applies staged single-entity data rows. It does not perfor
 ```text
 Connect
 ↓
-Import CSV / JSON / DVUR Package
+Import CSV / JSON / DVBUR Package
 ↓
 Validate
 ↓
@@ -63,17 +57,17 @@ Export / Requeue Failures
 
 ## Import & Preview
 
-![DVUR Home](docs/dvur-page-top.png)
+![DVBUR Home](docs/dvbur-page-top.png)
 
-Import CSV, JSON, or DVUR packages and preview staged rows before Dataverse is modified.
+Import CSV, JSON, or DVBUR packages and preview staged rows before Dataverse is modified.
 
 ---
 
 ## Create / Update Classification
 
-![Create Update Classification](docs/dvur-page-create-update-checks.png)
+![Create Update Classification](docs/dvbur-page-create-update-checks.png)
 
-DVUR can classify staged rows as creates or updates before execution.
+DVBUR can classify staged rows as creates or updates before execution.
 
 Metadata-backed key selection helps identify valid primary IDs and active alternate keys.
 
@@ -81,7 +75,7 @@ Metadata-backed key selection helps identify valid primary IDs and active altern
 
 ## Applying Upserts
 
-![Applying Upserts](docs/dvur-page-applying-upserts.png)
+![Applying Upserts](docs/dvbur-page-applying-upserts.png)
 
 Execution is performed in batches with live progress, throughput, elapsed time, and estimated completion tracking.
 
@@ -89,21 +83,21 @@ Execution is performed in batches with live progress, throughput, elapsed time, 
 
 ## Preview Review Surface
 
-![Preview Upserts](docs/dvur-page-preview-upserts.png)
+![Preview Upserts](docs/dvbur-page-preview-upserts.png)
 
 Review classified creates and updates before applying changes.
 
-DVUR follows a preview-first workflow and never modifies Dataverse without explicit user action.
+DVBUR follows a preview-first workflow and never modifies Dataverse without explicit user action.
 
 ---
 
 ## Failure Analysis
 
-![Failure Review](docs/dvur-page-failure-summary.png)
+![Failure Review](docs/dvbur-page-failure-summary.png)
 
 Execution failures are grouped and summarised.
 
-DVUR surfaces:
+DVBUR surfaces:
 
 - failure category
 - affected column
@@ -123,7 +117,7 @@ Failures can be exported or requeued for later correction and replay.
 - Single entity imports
 - CSV records
 - JSON records
-- DVUR package records
+- DVBUR package records
 - Primary ID upserts
 - Alternate-key upserts
 - Batch execution
@@ -192,7 +186,7 @@ Share:
 
 * Feature requests
 * Bug reports
-* Metadata reconstruction scenarios
+* Bulk upsert scenarios
 * Workflow suggestions
 * Product feedback
 

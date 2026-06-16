@@ -1,4 +1,4 @@
-import { EntityAttributeViewModel, EntityKeyViewModel, EntityViewModel } from '../product/attributeFactoryTypes';
+import { EntityAttributeViewModel, EntityKeyViewModel, EntityViewModel } from '../product/upsertRunnerTypes';
 import { DataverseHttpClient } from './dataverseHttpClient';
 
 type ODataList<T> = { value?: T[] };
@@ -16,7 +16,7 @@ type EntityKeyMetadataRow = { LogicalName?: string; DisplayName?: { UserLocalize
 function encodeLogicalName(value: string): string { return value.replace(/'/g, "''"); }
 function getDisplayLabel(row: EntityMetadataRow, fallback?: string): string | undefined { return row.DisplayName?.UserLocalizedLabel?.Label?.trim() || fallback; }
 
-export class AttributeMetadataClient {
+export class TableMetadataClient {
 	constructor(private readonly client: DataverseHttpClient) {}
 
 	async listEntities(): Promise<EntityViewModel[]> {

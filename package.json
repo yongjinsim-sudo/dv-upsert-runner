@@ -1,8 +1,8 @@
 {
 	"name": "dv-bulk-upsert-runner",
 	"displayName": "DV Bulk Upsert Runner",
-	"description": "Preview-first Dataverse bulk upsert utility for CSV, JSON, and DVUR packages.",
-	"version": "1.0.2",
+	"description": "Preview-first Dataverse bulk upsert utility for CSV, JSON, and DVBUR packages.",
+	"version": "1.0.3",
 	"engines": {
 		"vscode": "^1.85.0"
 	},
@@ -86,7 +86,7 @@
 		"crm",
 		"microsoft dataverse",
 		"preview first",
-		"dvur"
+		"dvbur"
 	],
 	"publisher": "dv-forgelab",
 	"icon": "images/dv-utilities-icon-128.png",

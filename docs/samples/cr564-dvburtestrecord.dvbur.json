@@ -2,7 +2,7 @@
   "version": "1.0",
   "source": "DVQR",
   "generatedBy": "DV Quick Run",
-  "entityLogicalName": "cr564_dvurtestrecord",
+  "entityLogicalName": "cr564_dvburtestrecord",
   "keyMode": "AlternateKey",
   "keyColumn": "cr564_externalid",
   "records": [

@@ -1,27 +1,27 @@
 import { escapeHtml } from '../shared/escaping';
-import { AttributeFactoryViewModel, UpsertRowDraft } from '../product/attributeFactoryTypes';
-import { attributeFactoryScript } from './attributeFactoryScript';
-import { attributeFactoryStyles } from './attributeFactoryStyles';
+import { BulkUpsertRunnerViewModel, UpsertRowDraft } from '../product/upsertRunnerTypes';
+import { upsertRunnerScript } from './upsertRunnerScript';
+import { upsertRunnerStyles } from './upsertRunnerStyles';
 
 type RenderOptions = { logoUri: string; cspSource: string };
 
-function getEnvironmentPillClass(viewModel: AttributeFactoryViewModel): string {
+function getEnvironmentPillClass(viewModel: BulkUpsertRunnerViewModel): string {
 	if (viewModel.environment.safety === 'Red') { return 'danger'; }
 	if (viewModel.environment.safety === 'Amber') { return 'warning'; }
 	if (viewModel.environment.safety === 'Grey') { return 'grey'; }
 	return 'accent';
 }
-function getApplyButtonClass(viewModel: AttributeFactoryViewModel): string {
+function getApplyButtonClass(viewModel: BulkUpsertRunnerViewModel): string {
 	if (viewModel.environment.safety === 'Red') { return 'danger-primary'; }
 	if (viewModel.environment.safety === 'Amber') { return 'warning-primary'; }
 	return 'primary';
 }
-function getPreviewCardClass(viewModel: AttributeFactoryViewModel): string {
+function getPreviewCardClass(viewModel: BulkUpsertRunnerViewModel): string {
 	if (viewModel.environment.safety === 'Red') { return 'danger-preview'; }
 	if (viewModel.environment.safety === 'Amber') { return 'warning-preview'; }
 	return 'grey-preview';
 }
-function getApplyWarningText(viewModel: AttributeFactoryViewModel): string {
+function getApplyWarningText(viewModel: BulkUpsertRunnerViewModel): string {
 	if (viewModel.environment.safety === 'Red') { return 'Production-class environment detected. Review carefully before applying data changes.'; }
 	if (viewModel.environment.safety === 'Amber') { return 'Controlled non-production environment detected. Review staged upserts before applying.'; }
 	return 'Rows are staged locally. Dataverse data only changes after explicit apply.';
@@ -32,7 +32,7 @@ function input(field: string, value: unknown, extra = ''): string {
 function select(field: string, values: string[], selected: string): string {
 	return `<select data-command="updateDraft" data-field="${escapeHtml(field)}">${values.map(value => `<option value="${escapeHtml(value)}"${value === selected ? ' selected' : ''}>${escapeHtml(value)}</option>`).join('')}</select>`;
 }
-function keyColumnSelector(viewModel: AttributeFactoryViewModel): string {
+function keyColumnSelector(viewModel: BulkUpsertRunnerViewModel): string {
 	const selectedEntity = viewModel.entities.find(entity => entity.logicalName === viewModel.draft.entityLogicalName);
 	if (viewModel.draft.keyMode === 'PrimaryId') {
 		const primaryId = selectedEntity?.primaryIdAttribute || viewModel.draft.keyColumn;
@@ -52,14 +52,14 @@ function keyColumnSelector(viewModel: AttributeFactoryViewModel): string {
 	return `<select data-command="updateDraft" data-field="keyColumn">${hasSelected ? '' : `<option value="${escapeHtml(viewModel.draft.keyColumn)}" selected>${escapeHtml(viewModel.draft.keyColumn || 'Select key...')}${viewModel.draft.keyColumn ? ' — not active for this table' : ''}</option>`}${activeSingleColumnKeys.map(key => { const column = key.keyAttributes[0]; const label = `${key.displayName || key.logicalName} — ${column}`; return `<option value="${escapeHtml(column)}"${column.toLowerCase() === viewModel.draft.keyColumn.toLowerCase() ? ' selected' : ''}>${escapeHtml(label)}</option>`; }).join('')}</select>`;
 }
 
-function entitySelector(viewModel: AttributeFactoryViewModel): string {
+function entitySelector(viewModel: BulkUpsertRunnerViewModel): string {
 	if (!viewModel.entities.length) {
 		return input('entityLogicalName', viewModel.draft.entityLogicalName, 'placeholder="account"');
 	}
 	const hasSelected = viewModel.entities.some(entity => entity.logicalName === viewModel.draft.entityLogicalName);
 	return `<select data-command="updateDraft" data-field="entityLogicalName">${hasSelected ? '' : `<option value="${escapeHtml(viewModel.draft.entityLogicalName)}">${escapeHtml(viewModel.draft.entityLogicalName || 'Select table...')}</option>`}${viewModel.entities.map(entity => `<option value="${escapeHtml(entity.logicalName)}"${entity.logicalName === viewModel.draft.entityLogicalName ? ' selected' : ''}>${escapeHtml(entity.logicalName)}${entity.displayName ? ` — ${escapeHtml(entity.displayName)}` : ''}</option>`).join('')}</select>`;
 }
-function renderPackageSource(viewModel: AttributeFactoryViewModel): string {
+function renderPackageSource(viewModel: BulkUpsertRunnerViewModel): string {
 	if (!viewModel.draft.imported) { return ''; }
 	if (viewModel.draft.trustedSource) {
 		return `<span class="dv-pill success">Trusted DVQR package</span>`;
@@ -100,17 +100,17 @@ function compactRowTitle(row: UpsertRowDraft, keyColumn: string): string {
 	const keyValue = rowKeyValue(row, keyColumn);
 	return `Row ${escapeHtml(row.rowNumber)}${keyValue !== undefined ? ` • ${escapeHtml(String(keyValue))}` : ''}`;
 }
-function renderCompactRow(row: UpsertRowDraft, viewModel: AttributeFactoryViewModel, badge?: string, badgeClass = 'grey'): string {
+function renderCompactRow(row: UpsertRowDraft, viewModel: BulkUpsertRunnerViewModel, badge?: string, badgeClass = 'grey'): string {
 	const fieldCount = Object.keys(row.values).length;
 	return `<div class="dv-operation dv-compact-row"><div class="dv-row-content"><strong>${compactRowTitle(row, viewModel.draft.keyColumn)}</strong><p>${escapeHtml(compactName(row))}</p><details><summary>View ${escapeHtml(fieldCount)} field(s)</summary><div class="dv-field-grid">${renderFields(row)}</div></details></div>${badge ? `<span class="dv-pill ${badgeClass}">${escapeHtml(badge)}</span>` : `<span class="dv-pill grey">${escapeHtml(fieldCount)} field(s)</span>`}</div>`;
 }
 
-function renderRowPreview(viewModel: AttributeFactoryViewModel): string {
+function renderRowPreview(viewModel: BulkUpsertRunnerViewModel): string {
 	const rows = viewModel.draft.rows.slice(0, 5);
-	if (!rows.length) { return '<div class="dv-empty">Import CSV, JSON, or a DVUR package to begin.</div>'; }
+	if (!rows.length) { return '<div class="dv-empty">Import CSV, JSON, or a DVBUR package to begin.</div>'; }
 	return `<h3 class="dv-subheading">Sample preview</h3><div class="dv-list">${rows.map(row => renderCompactRow(row, viewModel)).join('')}${viewModel.draft.rows.length > rows.length ? `<div class="dv-empty">Showing first ${rows.length} of ${viewModel.draft.rows.length} rows. Expand a row only when you need the full payload.</div>` : ''}</div>`;
 }
-function renderImportSummary(viewModel: AttributeFactoryViewModel): string {
+function renderImportSummary(viewModel: BulkUpsertRunnerViewModel): string {
 	if (!viewModel.draft.imported) { return ''; }
 	return `<div class="dv-preview-grid dv-import-summary">
 		<div><span>Source</span><strong>${viewModel.draft.trustedSource ? 'Trusted DVQR Package' : viewModel.draft.importMode === 'GenericJson' ? 'JSON' : 'CSV'}</strong><em>${escapeHtml(viewModel.draft.sourceLabel || 'Imported package')}</em></div>
@@ -119,21 +119,21 @@ function renderImportSummary(viewModel: AttributeFactoryViewModel): string {
 		<div><span>Entity / Key</span><strong>${escapeHtml(viewModel.draft.entityLogicalName || 'Not selected')}</strong><em>${escapeHtml(viewModel.draft.keyMode)} • ${escapeHtml(viewModel.draft.keyColumn || 'No key')}</em></div>
 	</div>`;
 }
-function isPreviewReady(viewModel: AttributeFactoryViewModel): boolean {
+function isPreviewReady(viewModel: BulkUpsertRunnerViewModel): boolean {
 	return viewModel.draft.imported
 		&& viewModel.draft.rows.length > 0
 		&& viewModel.draft.entityLogicalName.trim().length > 0
 		&& viewModel.draft.keyMode.trim().length > 0
 		&& viewModel.draft.keyColumn.trim().length > 0;
 }
-function renderFooterNote(viewModel: AttributeFactoryViewModel, unresolved: number): string {
+function renderFooterNote(viewModel: BulkUpsertRunnerViewModel, unresolved: number): string {
 	if (viewModel.executionProgress?.cancelled && (viewModel.executionProgress.skipped ?? 0) > 0) {
 		return `${viewModel.executionProgress.applied} applied. ${viewModel.executionProgress.skipped ?? 0} available for requeue or export.`;
 	}
 	if (unresolved > 0) { return 'Create/update state unresolved. Run Check Creates / Updates before applying.'; }
 	return `Classification complete. Ready to apply ${viewModel.pendingChanges.length} upserts.`;
 }
-function renderPreview(viewModel: AttributeFactoryViewModel): string {
+function renderPreview(viewModel: BulkUpsertRunnerViewModel): string {
 	if (!viewModel.previewOpen) { return ''; }
 	const hasErrors = viewModel.summary.errorCount > 0;
 	const applyButtonClass = getApplyButtonClass(viewModel);
@@ -163,7 +163,7 @@ function renderPreview(viewModel: AttributeFactoryViewModel): string {
 		<div class="dv-actions" style="margin-top:12px"><button class="secondary" data-command="cancelPreview">Cancel preview</button><button class="secondary" ${canCheck ? '' : 'disabled'} data-command="checkOperations">${escapeHtml(checkLabel)}</button><button class="${applyButtonClass}" ${canApply ? '' : 'disabled'} data-command="applyAndPublish">Apply ${escapeHtml(viewModel.pendingChanges.length)} Upserts</button></div>
 	</section>`;
 }
-function renderProgress(viewModel: AttributeFactoryViewModel): string {
+function renderProgress(viewModel: BulkUpsertRunnerViewModel): string {
 	const progress = viewModel.executionProgress;
 	if (!progress?.running) { return ''; }
 	const pct = progress.total ? Math.round((progress.processed / progress.total) * 100) : 0;
@@ -177,7 +177,7 @@ function renderProgress(viewModel: AttributeFactoryViewModel): string {
 	const subText = isPreview
 		? `${escapeHtml(progress.processed)} of ${escapeHtml(progress.total)} rows checked against Dataverse.`
 		: `Batch ${escapeHtml(progress.batchIndex)} of ${escapeHtml(progress.batchCount)}. ${escapeHtml(progress.processed)} of ${escapeHtml(progress.total)} rows processed.`;
-	const stopNote = progress.stopRequested ? '<div class="dv-preview-note">Stop requested. DVUR will finish the current batch and skip remaining batches.</div>' : '';
+	const stopNote = progress.stopRequested ? '<div class="dv-preview-note">Stop requested. DVBUR will finish the current batch and skip remaining batches.</div>' : '';
 	const cancelAction = !isPreview ? `<div class="dv-actions" style="margin-top:12px"><button class="secondary" ${progress.stopRequested ? 'disabled' : ''} data-command="requestCancelRun">${progress.stopRequested ? 'Stop requested' : 'Cancel after current batch'}</button></div>` : '';
 	const middleCards = isPreview
 		? `<div><span>Creates</span><strong>${escapeHtml(viewModel.summary.createCount)}</strong><em>Detected so far</em></div><div><span>Updates</span><strong>${escapeHtml(viewModel.summary.updateCount)}</strong><em>Detected so far</em></div><div><span>Unresolved</span><strong>${escapeHtml(unresolved)}</strong><em>Remaining rows</em></div>`
@@ -348,7 +348,7 @@ function renderFailureTitle(failure: NormalizedFailure, count?: number): string 
 	return `${severity.icon} ${failure.category}${count !== undefined ? ` • ${count} row(s)` : ''}`;
 }
 
-function renderResults(viewModel: AttributeFactoryViewModel): string {
+function renderResults(viewModel: BulkUpsertRunnerViewModel): string {
 	if (!viewModel.executionResults.length) { return ''; }
 	const applied = viewModel.executionResults.filter(result => result.status === 'Applied').length;
 	const failed = viewModel.executionResults.filter(result => result.status === 'Failed').length;
@@ -380,25 +380,25 @@ function renderResults(viewModel: AttributeFactoryViewModel): string {
 	const skippedActions = cancelled && skipped ? '<button class="secondary" data-command="exportSkipped">Export skipped</button><button class="secondary" data-command="requeueSkipped">Requeue skipped</button>' : '';
 	return `<section class="dv-card dv-section"><div class="dv-section-header"><div><h2>Execution results</h2><p>${escapeHtml(applied)} applied. ${escapeHtml(failed)} failed.${skipped ? ` ${escapeHtml(skipped)} skipped.` : ''}${elapsed ? ` Elapsed ${escapeHtml(elapsed)}.` : ''}</p></div><div class="dv-actions">${failedActions}${skippedActions}<span class="dv-pill ${failed || cancelled ? 'warning' : 'success'}">${failed ? 'Review failures' : cancelled ? 'Cancelled' : 'Completed'}</span></div></div>${executionSummary}${failureSummaryHtml}${failureGroupHtml}${successfulSummary}${failureDetails}</section>`;
 }
-function renderValidation(viewModel: AttributeFactoryViewModel): string {
-	if (!viewModel.draft.imported) { return '<div class="dv-empty">No package imported yet. Validation starts after CSV, JSON, or DVUR package import.</div>'; }
+function renderValidation(viewModel: BulkUpsertRunnerViewModel): string {
+	if (!viewModel.draft.imported) { return '<div class="dv-empty">No package imported yet. Validation starts after CSV, JSON, or DVBUR package import.</div>'; }
 	if (!viewModel.validationGroups.length) { return '<div class="dv-empty">No validation issues.</div>'; }
 	return viewModel.validationGroups.map(group => `<div class="dv-result"><div><strong>${escapeHtml(group.severity)} • ${escapeHtml(group.count)} occurrence(s)</strong><p>${escapeHtml(group.message)}</p>${group.rowNumbers.length ? `<p>Affected rows: ${escapeHtml(group.rowNumbers.length)}. Examples: ${escapeHtml(group.rowNumbers.slice(0, 8).join(', '))}${group.rowNumbers.length > 8 ? '…' : ''}</p>` : ''}</div><span class="dv-pill ${group.severity === 'Error' ? 'danger' : 'warning'}">${escapeHtml(group.severity)}</span></div>`).join('');
 }
 
-export function renderAttributeFactoryHtml(viewModel: AttributeFactoryViewModel, options: RenderOptions): string {
+export function renderUpsertRunnerHtml(viewModel: BulkUpsertRunnerViewModel, options: RenderOptions): string {
 	const messageHtml = viewModel.message ? `<div class="dv-message ${escapeHtml(viewModel.message.kind)}">${escapeHtml(viewModel.message.text)}</div>` : '';
 	const environmentPillClass = getEnvironmentPillClass(viewModel);
 	const environmentPillText = viewModel.environment.label === 'Not connected' ? 'No environment connected' : viewModel.environment.label;
-	return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${options.cspSource}; style-src ${options.cspSource} 'unsafe-inline'; script-src ${options.cspSource} 'unsafe-inline';"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>${attributeFactoryStyles}</style><title>${escapeHtml(viewModel.productName)}</title></head>
+	return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${options.cspSource}; style-src ${options.cspSource} 'unsafe-inline'; script-src ${options.cspSource} 'unsafe-inline';"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>${upsertRunnerStyles}</style><title>${escapeHtml(viewModel.productName)}</title></head>
 	<body><div class="dv-shell">
 		<header class="dv-hero"><div><div class="dv-kicker">DV FORGELAB UTILITY</div><h1>${escapeHtml(viewModel.productName)}</h1><p>${escapeHtml(viewModel.subtitle)}</p></div><div class="dv-logo-card"><img src="${options.logoUri}" alt="DV ForgeLab"></div></header>
 		<section class="dv-toolbar" aria-label="Environment and actions"><div class="dv-status-pills"><span class="dv-pill ${environmentPillClass}">${escapeHtml(environmentPillText)}</span><span class="dv-pill">Preview-first</span><span class="dv-pill">Runner</span></div><div class="dv-actions"><button data-command="connect">Connect</button><button class="secondary" data-command="switchEnvironment">Change environment</button><button class="secondary" data-command="refreshMetadata">Refresh</button><button class="secondary" data-command="openFeedback">Feedback</button></div></section>
 		${messageHtml}
 		<section class="dv-grid"><div class="dv-card dv-summary accent-blue"><span>RECORDS</span><strong>${escapeHtml(viewModel.summary.recordCount)}</strong><p>Imported rows</p></div><div class="dv-card dv-summary"><span>CREATES</span><strong>${escapeHtml(viewModel.summary.createCount)}</strong><p>Detected by preview</p></div><div class="dv-card dv-summary accent-yellow"><span>UPDATES</span><strong>${escapeHtml(viewModel.summary.updateCount)}</strong><p>Detected by preview</p></div><div class="dv-card dv-summary"><span>ISSUES</span><strong>${escapeHtml(viewModel.summary.issueCount)}</strong><p>Review before apply</p></div></section>
-		<section class="dv-card dv-section"><div class="dv-section-header"><div><h2>Import package</h2><p>Import generic CSV/JSON or a trusted DVQR-generated .dvur.json package. Generic imports are basic; trusted DVQR packages may carry richer metadata context later.</p></div><div class="dv-actions"><select class="dv-command-select" data-command-select="import"><option value="">Import...</option><option value="importCsv">CSV</option><option value="importJson">JSON / DVUR Package</option></select><select class="dv-command-select" data-command-select="export"><option value="">Export...</option><option value="exportCsv">CSV</option><option value="exportJson">DVUR JSON</option></select><button class="secondary" data-command="validate">Validate</button><button class="secondary" data-command="clearDrafts">Clear</button><button ${isPreviewReady(viewModel) ? '' : 'disabled'} data-command="openPreview">Preview</button></div></div>
+		<section class="dv-card dv-section"><div class="dv-section-header"><div><h2>Import package</h2><p>Import generic CSV/JSON or a trusted DVQR-generated .dvbur.json package. Generic imports are basic; trusted DVQR packages may carry richer metadata context later.</p></div><div class="dv-actions"><select class="dv-command-select" data-command-select="import"><option value="">Import...</option><option value="importCsv">CSV</option><option value="importJson">JSON / DVBUR Package</option></select><select class="dv-command-select" data-command-select="export"><option value="">Export...</option><option value="exportCsv">CSV</option><option value="exportJson">DVBUR JSON</option></select><button class="secondary" data-command="validate">Validate</button><button class="secondary" data-command="clearDrafts">Clear</button><button ${isPreviewReady(viewModel) ? '' : 'disabled'} data-command="openPreview">Preview</button></div></div>
 			<div class="dv-draft-fields"><label><span>Entity logical name</span>${entitySelector(viewModel)}</label><label><span>Key mode</span>${select('keyMode', ['AlternateKey', 'PrimaryId'], viewModel.draft.keyMode)}</label><label><span>Key column</span>${keyColumnSelector(viewModel)}</label><label><span>Batch size</span>${select('batchSize', ['100', '250', '500', '1000'], String(viewModel.draft.batchSize))}</label></div>
-			<div class="dv-source-row">${viewModel.draft.imported ? renderPackageSource(viewModel) : ''}<span class="dv-muted">${escapeHtml(viewModel.draft.imported ? (viewModel.draft.sourceLabel || 'Imported package') : 'No source imported. Import CSV, JSON, or DVUR package to begin.')}</span></div>
+			<div class="dv-source-row">${viewModel.draft.imported ? renderPackageSource(viewModel) : ''}<span class="dv-muted">${escapeHtml(viewModel.draft.imported ? (viewModel.draft.sourceLabel || 'Imported package') : 'No source imported. Import CSV, JSON, or DVBUR package to begin.')}</span></div>
 			${renderImportSummary(viewModel)}
 			${renderRowPreview(viewModel)}
 		</section>
@@ -406,5 +406,5 @@ export function renderAttributeFactoryHtml(viewModel: AttributeFactoryViewModel,
 		${renderPreview(viewModel)}${renderProgress(viewModel)}${renderResults(viewModel)}
 		<section class="dv-card dv-section"><h2>Boundary</h2><p>Runner, not migration platform. DV Bulk Upsert Runner applies single-entity data rows through a preview-first workflow. It does not perform ETL, scheduled sync, relationship graph migration, attachment migration, or automatic data cleansing.</p></section>
 		<footer class="dv-footer-note">DV Bulk Upsert Runner is part of the <a href="https://www.dvforgelab.com">DV ForgeLab</a> Dataverse tooling ecosystem. <a href="https://www.dvquickrun.com">DV Quick Run</a> is the flagship Dataverse investigation workbench.</footer>
-	</div><script>${attributeFactoryScript}</script></body></html>`;
+	</div><script>${upsertRunnerScript}</script></body></html>`;
 }

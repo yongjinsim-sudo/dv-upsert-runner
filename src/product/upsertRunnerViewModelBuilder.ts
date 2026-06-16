@@ -1,6 +1,6 @@
-import { AttributeFactoryState } from './attributeFactoryState';
-import { AttributeFactoryViewModel, EnvironmentSafety } from './attributeFactoryTypes';
-import { groupValidationIssues } from './attributeFactoryValidation';
+import { BulkUpsertRunnerState } from './upsertRunnerState';
+import { BulkUpsertRunnerViewModel, EnvironmentSafety } from './upsertRunnerTypes';
+import { groupValidationIssues } from './upsertRunnerValidation';
 
 function classifyEnvironment(label: string, url?: string): { safety: EnvironmentSafety; safetyLabel: string } {
 	const source = `${label} ${url ?? ''}`.toLowerCase();
@@ -10,11 +10,11 @@ function classifyEnvironment(label: string, url?: string): { safety: Environment
 	return { safety: 'Grey', safetyLabel: 'Development / unclassified environment' };
 }
 
-function getColumnCount(state: AttributeFactoryState): number {
+function getColumnCount(state: BulkUpsertRunnerState): number {
 	return new Set(state.draft.rows.flatMap(row => Object.keys(row.values))).size;
 }
 
-export function buildAttributeFactoryViewModel(state: AttributeFactoryState): AttributeFactoryViewModel {
+export function buildBulkUpsertRunnerViewModel(state: BulkUpsertRunnerState): BulkUpsertRunnerViewModel {
 	const environmentSafety = classifyEnvironment(state.environment.label, state.environment.url);
 	const errorCount = state.validationIssues.filter(issue => issue.severity === 'Error').length;
 	const warningCount = state.validationIssues.filter(issue => issue.severity === 'Warning').length;

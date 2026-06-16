@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
-import { AttributeMetadataClient } from '../dataverse/attributeMetadataClient';
-import { AttributeMutationClient } from '../dataverse/attributeMutationClient';
+import { TableMetadataClient } from '../dataverse/tableMetadataClient';
+import { UpsertMutationClient } from '../dataverse/upsertMutationClient';
 import { DataverseConnection, getDataverseConnection } from '../dataverse/dataverseConnection';
-import { createInitialAttributeFactoryState } from '../product/attributeFactoryState';
-import { ImportMode, KeyMode, UpsertPackageDraft, UpsertRowDraft } from '../product/attributeFactoryTypes';
-import { validateDrafts } from '../product/attributeFactoryValidation';
-import { buildAttributeFactoryViewModel } from '../product/attributeFactoryViewModelBuilder';
-import { renderAttributeFactoryHtml } from '../webview/renderAttributeFactoryHtml';
+import { createInitialBulkUpsertRunnerState } from '../product/upsertRunnerState';
+import { ImportMode, KeyMode, UpsertPackageDraft, UpsertRowDraft } from '../product/upsertRunnerTypes';
+import { validateDrafts } from '../product/upsertRunnerValidation';
+import { buildBulkUpsertRunnerViewModel } from '../product/upsertRunnerViewModelBuilder';
+import { renderUpsertRunnerHtml } from '../webview/renderUpsertRunnerHtml';
 
 const panelTitle = 'DV Bulk Upsert Runner';
 const commandName = 'DV Bulk Upsert Runner';
@@ -93,7 +93,7 @@ function importJson(content: string): { rows: UpsertRowDraft[]; entity?: string;
 		entity: normaliseString(object.entityLogicalName ?? object.entity),
 		keyColumn: normaliseString(object.keyColumn ?? object.key),
 		keyMode: normaliseString(object.keyMode).toLowerCase() === 'primaryid' ? 'PrimaryId' : 'AlternateKey',
-		importMode: normaliseString(object.generatedBy).toLowerCase().includes('dv quick run') || normaliseString(object.source).toLowerCase() === 'dvqr' ? 'DvurPackage' : 'GenericJson',
+		importMode: normaliseString(object.generatedBy).toLowerCase().includes('dv quick run') || normaliseString(object.source).toLowerCase() === 'dvqr' ? 'DvburPackage' : 'GenericJson',
 		trusted: normaliseString(object.generatedBy).toLowerCase().includes('dv quick run') || normaliseString(object.source).toLowerCase() === 'dvqr',
 		sourceLabel: normaliseString(object.generatedBy ?? object.sourceLabel ?? object.source)
 	};
@@ -127,11 +127,11 @@ function restorePendingOperations(statePending: { row: UpsertRowDraft; operation
 	}
 }
 
-export async function openAttributeFactoryCommand(context: vscode.ExtensionContext): Promise<void> {
+export async function openBulkUpsertRunnerCommand(context: vscode.ExtensionContext): Promise<void> {
 	let connection: DataverseConnection | undefined;
-	let metadataClient: AttributeMetadataClient | undefined;
-	let mutationClient: AttributeMutationClient | undefined;
-	const state = createInitialAttributeFactoryState();
+	let metadataClient: TableMetadataClient | undefined;
+	let mutationClient: UpsertMutationClient | undefined;
+	const state = createInitialBulkUpsertRunnerState();
 
 	const panel = vscode.window.createWebviewPanel('dvUpsertRunner', panelTitle, vscode.ViewColumn.One, { enableScripts: true, localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'images')] });
 	const logoUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'images', 'dv-utilities-icon-128.png'));
@@ -142,15 +142,15 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 		state.pendingChanges = result.pendingChanges;
 	}
 	function render(): void {
-		panel.webview.html = renderAttributeFactoryHtml(buildAttributeFactoryViewModel(state), { logoUri: logoUri.toString(), cspSource: panel.webview.cspSource });
+		panel.webview.html = renderUpsertRunnerHtml(buildBulkUpsertRunnerViewModel(state), { logoUri: logoUri.toString(), cspSource: panel.webview.cspSource });
 	}
 	async function connect(forcePick = false): Promise<void> {
 		try {
 			state.message = { kind: 'Info', text: 'Connecting to Dataverse...' }; render();
 			connection = await getDataverseConnection(context, { forcePick });
 			if (!connection) { state.message = { kind: 'Warning', text: 'Connection cancelled.' }; render(); return; }
-			metadataClient = new AttributeMetadataClient(connection.client);
-			mutationClient = new AttributeMutationClient(connection.client);
+			metadataClient = new TableMetadataClient(connection.client);
+			mutationClient = new UpsertMutationClient(connection.client);
 			state.environment = { label: connection.environmentLabel, url: connection.environmentUrl, state: 'Connected', safety: 'Grey', safetyLabel: 'Connected' };
 			state.entities = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${commandName}: Loading Dataverse tables`, cancellable: false }, () => metadataClient!.listEntities());
 			state.entityAttributes = [];
@@ -206,7 +206,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 		state.message = { kind: 'Info', text: `${state.draft.rows.length} row(s) imported from CSV.` }; render();
 	}
 	async function importJsonFromFile(): Promise<void> {
-		const picked = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { JSON: ['json'] }, openLabel: 'Import JSON / DVUR Package' });
+		const picked = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { JSON: ['json'] }, openLabel: 'Import JSON / DVBUR Package' });
 		if (!picked?.[0]) { return; }
 		const content = Buffer.from(await vscode.workspace.fs.readFile(picked[0])).toString('utf8');
 		const imported = importJson(content);
@@ -219,7 +219,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 		state.message = { kind: 'Info', text: `${state.draft.rows.length} row(s) imported from ${imported.trusted ? 'trusted DVQR package' : 'JSON'}.` }; render();
 	}
 	async function exportJson(): Promise<void> {
-		const uri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file('dv-upsert-runner-package.dvur.json'), filters: { JSON: ['json'] }, saveLabel: 'Export DVUR Package' });
+		const uri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file('dv-upsert-runner-package.dvbur.json'), filters: { JSON: ['json'] }, saveLabel: 'Export DVBUR Package' });
 		if (!uri) { return; }
 		await vscode.workspace.fs.writeFile(uri, Buffer.from(buildJsonContent(state.draft), 'utf8'));
 		state.message = { kind: 'Info', text: `${state.draft.rows.length} row(s) exported to JSON.` }; render();
@@ -310,7 +310,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 	async function exportSkippedRows(): Promise<void> {
 		const skippedRows = getSkippedRows();
 		if (!skippedRows.length) { state.message = { kind: 'Info', text: 'No skipped rows to export.' }; render(); return; }
-		const uri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file('dv-upsert-runner-skipped.dvur.json'), filters: { JSON: ['json'] }, saveLabel: 'Export Skipped Rows' });
+		const uri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file('dv-upsert-runner-skipped.dvbur.json'), filters: { JSON: ['json'] }, saveLabel: 'Export Skipped Rows' });
 		if (!uri) { return; }
 		const exportDraft = { ...state.draft, rows: skippedRows };
 		await vscode.workspace.fs.writeFile(uri, Buffer.from(buildJsonContent(exportDraft), 'utf8'));
@@ -334,7 +334,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 		const failedIds = new Set(state.executionResults.filter(result => result.status === 'Failed').map(result => result.rowId));
 		const failedRows = state.draft.rows.filter(row => failedIds.has(row.id));
 		if (!failedRows.length) { state.message = { kind: 'Info', text: 'No failed rows to export.' }; render(); return; }
-		const uri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file('dv-upsert-runner-failures.dvur.json'), filters: { JSON: ['json'] }, saveLabel: 'Export Failed Rows' });
+		const uri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file('dv-upsert-runner-failures.dvbur.json'), filters: { JSON: ['json'] }, saveLabel: 'Export Failed Rows' });
 		if (!uri) { return; }
 		const exportDraft = { ...state.draft, rows: failedRows };
 		await vscode.workspace.fs.writeFile(uri, Buffer.from(buildJsonContent(exportDraft), 'utf8'));
@@ -441,7 +441,7 @@ export async function openAttributeFactoryCommand(context: vscode.ExtensionConte
 				case 'checkOperations': await checkCreatesUpdates(); break;
 				case 'cancelPreview': state.previewOpen = false; render(); break;
 				case 'applyAndPublish': await applyUpsert(); break;
-				case 'requestCancelRun': state.cancelAfterCurrentBatch = true; if (state.executionProgress?.running) { state.executionProgress = { ...state.executionProgress, stopRequested: true }; state.message = { kind: 'Warning', text: 'Stop requested. DVUR will finish the current batch and skip remaining batches.' }; render(); } break;
+				case 'requestCancelRun': state.cancelAfterCurrentBatch = true; if (state.executionProgress?.running) { state.executionProgress = { ...state.executionProgress, stopRequested: true }; state.message = { kind: 'Warning', text: 'Stop requested. DVBUR will finish the current batch and skip remaining batches.' }; render(); } break;
 				case 'clearDrafts': state.draft.rows = []; state.draft.imported = false; state.draft.sourceLabel = ''; state.entityAttributes = []; state.entityKeys = []; state.executionResults = []; state.executionProgress = undefined; state.previewOpen = false; updateValidation(); render(); break;
 			}
 		} catch (error) { state.message = { kind: 'Error', text: error instanceof Error ? error.message : String(error) }; render(); }

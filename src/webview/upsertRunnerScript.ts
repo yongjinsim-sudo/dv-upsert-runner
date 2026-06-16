@@ -1,4 +1,4 @@
-export const attributeFactoryScript = String.raw`
+export const upsertRunnerScript = String.raw`
 (function () {
 	const vscode = acquireVsCodeApi();
 	function post(command, payload) { vscode.postMessage({ command, payload: payload || {} }); }

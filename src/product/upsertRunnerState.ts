@@ -1,7 +1,7 @@
-import { AttributeFactoryEnvironmentViewModel, EntityAttributeViewModel, EntityKeyViewModel, EntityViewModel, ExecutionProgress, ExecutionResult, PendingUpsertChange, UpsertPackageDraft, ValidationIssue } from './attributeFactoryTypes';
+import { BulkUpsertRunnerEnvironmentViewModel, EntityAttributeViewModel, EntityKeyViewModel, EntityViewModel, ExecutionProgress, ExecutionResult, PendingUpsertChange, UpsertPackageDraft, ValidationIssue } from './upsertRunnerTypes';
 
-export type AttributeFactoryState = {
-	environment: AttributeFactoryEnvironmentViewModel;
+export type BulkUpsertRunnerState = {
+	environment: BulkUpsertRunnerEnvironmentViewModel;
 	entities: EntityViewModel[];
 	entityAttributes: EntityAttributeViewModel[];
 	entityKeys: EntityKeyViewModel[];
@@ -15,7 +15,7 @@ export type AttributeFactoryState = {
 	message?: { kind: 'Info' | 'Warning' | 'Error'; text: string };
 };
 
-export function createInitialAttributeFactoryState(): AttributeFactoryState {
+export function createInitialBulkUpsertRunnerState(): BulkUpsertRunnerState {
 	return {
 		environment: { label: 'Not connected', state: 'NotConnected', safety: 'None', safetyLabel: 'No environment selected' },
 		entities: [],

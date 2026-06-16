@@ -1,4 +1,4 @@
-export const attributeFactoryStyles = `
+export const upsertRunnerStyles = `
 :root {
 	--dv-bg: #111314;
 	--dv-surface: #1f2123;
@@ -339,7 +339,7 @@ textarea { min-height: 54px; resize: vertical; }
 
 .dv-subheading { margin: 18px 0 10px; font-size: 13px; color: var(--dv-muted); text-transform: uppercase; letter-spacing: .08em; }
 
-/* DVUR import / execution refinements */
+/* DVBUR import / execution refinements */
 .dv-source-row {
 	display: flex;
 	gap: 8px;

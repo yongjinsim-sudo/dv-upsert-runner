@@ -1,6 +1,6 @@
 export type EnvironmentSafety = 'None' | 'Grey' | 'Amber' | 'Red';
 
-export type AttributeFactoryEnvironmentViewModel = {
+export type BulkUpsertRunnerEnvironmentViewModel = {
 	label: string;
 	url?: string;
 	state: 'NotConnected' | 'Connected';
@@ -30,7 +30,7 @@ export type EntityAttributeViewModel = {
 	isValidForUpdate?: boolean;
 };
 
-export type ImportMode = 'GenericCsv' | 'GenericJson' | 'DvurPackage';
+export type ImportMode = 'GenericCsv' | 'GenericJson' | 'DvburPackage';
 export type KeyMode = 'PrimaryId' | 'AlternateKey';
 export type RowOperation = 'Create' | 'Update' | 'Unknown';
 
@@ -103,10 +103,10 @@ export type ExecutionProgress = {
 	skippedRowIds?: string[];
 };
 
-export type AttributeFactoryViewModel = {
+export type BulkUpsertRunnerViewModel = {
 	productName: string;
 	subtitle: string;
-	environment: AttributeFactoryEnvironmentViewModel;
+	environment: BulkUpsertRunnerEnvironmentViewModel;
 	entities: EntityViewModel[];
 	entityAttributes: EntityAttributeViewModel[];
 	entityKeys: EntityKeyViewModel[];

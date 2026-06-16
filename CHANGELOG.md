@@ -1,12 +1,24 @@
 # Changelog
 
-## 1.0.1 — Feedback to DV ForgeLab
+## 1.0.3 — DVBUR Naming Cleanup
 
-Added a Feedback button to https://dvforgelab.com/feedback
+### Changed
+
+- Renamed remaining legacy package references to DVBUR across README, package metadata, UI copy, samples, and screenshots.
+- Standardised package references on `.dvbur.json`.
+- Cleaned up irrelevant inherited internal source naming to reflect DV Bulk Upsert Runner.
+- Refreshed sample artifact filenames to use `dvbur` naming.
+
+## 1.0.2 — Feedback Integration & DVBUR Naming Cleanup
+
+### Added
+
+- Added a Feedback button linking to the shared DV ForgeLab feedback portal.
+- Feedback opens with DV Bulk Upsert Runner and the current extension version preselected.
 
 ## 1.0.1 — Preview-First Bulk Upsert Runner
 
-Marketplace readme update
+Marketplace README update.
 
 ## 1.0.0 — Preview-First Bulk Upsert Runner
 
@@ -16,7 +28,7 @@ Initial public release.
 
 * CSV import support
 * JSON import support
-* `.dvur.json` package support
+* `.dvbur.json` package support
 * Single-entity Dataverse bulk upsert workflow
 * Primary ID upsert support
 * Alternate-key upsert support
@@ -40,7 +52,7 @@ Initial public release.
 ```text
 Connect
 ↓
-Import CSV / JSON / DVUR Package
+Import CSV / JSON / DVBUR Package
 ↓
 Validate
 ↓
